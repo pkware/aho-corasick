@@ -67,7 +67,7 @@ publishing {
 signing {
   if (System.getenv("CI").toBoolean()) {
     println("Signing artifacts using in-memory PGP key")
-    println("isNull: ${findProperty("signingKey")==null}")
+    println("isNull: ${findProperty("SONATYPE_NEXUS_USERNAME")==null}")
     val signingKey: String? by project
     val signingPassword: String? by project
     useInMemoryPgpKeys(signingKey, signingPassword)
