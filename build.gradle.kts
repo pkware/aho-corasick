@@ -65,11 +65,13 @@ publishing {
 }
 
 signing {
-//  if (System.getenv("CI").toBoolean()) {
+  if (System.getenv("CI").toBoolean()) {
+    println("Signing artifacts using in-memory PGP key")
+    println(project.properties.keys.joinToString())
     val signingKey: String? by project
     val signingPassword: String? by project
     useInMemoryPgpKeys(signingKey, signingPassword)
-//  }
+  }
 
   // For local signing, follow these steps https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signatory_credentials
 
