@@ -1,12 +1,14 @@
 package org.arabidopsis.ahocorasick;
 
 import junit.framework.TestCase;
+
 import java.util.Iterator;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.Iterator;
+
+import static java.util.Collections.singletonList;
 
 
 /**
@@ -15,25 +17,19 @@ import java.util.Iterator;
 
 public class TestAhoCorasick extends TestCase {
 
-    private AhoCorasick tree;
-
-    public void setUp() {
-	this.tree = new AhoCorasick();
-    }
-
-
     public void testConstruction() {
+	AhoCorasick<byte[]> tree = new AhoCorasick<>();
 	tree.add("hello".getBytes(), "hello".getBytes());
 	tree.add("hi".getBytes(), "hi".getBytes());
 	tree.prepare();
 
-	State s0 = tree.getRoot();
-	State s1 = s0.get((byte) 'h');
-	State s2 = s1.get((byte) 'e');
-	State s3 = s2.get((byte) 'l');
-	State s4 = s3.get((byte) 'l');
-	State s5 = s4.get((byte) 'o');
-	State s6 = s1.get((byte) 'i');
+	State<byte[]> s0 = tree.getRoot();
+	State<byte[]> s1 = s0.get((byte) 'h');
+	State<byte[]> s2 = s1.get((byte) 'e');
+	State<byte[]> s3 = s2.get((byte) 'l');
+	State<byte[]> s4 = s3.get((byte) 'l');
+	State<byte[]> s5 = s4.get((byte) 'o');
+	State<byte[]> s6 = s1.get((byte) 'i');
 	
 	assertEquals(s0, s1.getFail());
 	assertEquals(s0, s2.getFail());
@@ -55,25 +51,26 @@ public class TestAhoCorasick extends TestCase {
 
 
     public void testExample() {
+	AhoCorasick<byte[]> tree = new AhoCorasick<>();
 	tree.add("he".getBytes(), "he".getBytes());
 	tree.add("she".getBytes(), "she".getBytes());
 	tree.add("his".getBytes(), "his".getBytes());
 	tree.add("hers".getBytes(), "hers".getBytes());
 	assertEquals(10, tree.getRoot().size());
 	tree.prepare();		// after prepare, we can't call size()
-	State s0 = tree.getRoot();
-	State s1 = s0.get((byte) 'h');
-	State s2 = s1.get((byte) 'e');
+	State<byte[]> s0 = tree.getRoot();
+	State<byte[]> s1 = s0.get((byte) 'h');
+	State<byte[]> s2 = s1.get((byte) 'e');
 
-	State s3 = s0.get((byte) 's');
-	State s4 = s3.get((byte) 'h');
-	State s5 = s4.get((byte) 'e');
+	State<byte[]> s3 = s0.get((byte) 's');
+	State<byte[]> s4 = s3.get((byte) 'h');
+	State<byte[]> s5 = s4.get((byte) 'e');
 
-	State s6 = s1.get((byte) 'i');
-	State s7 = s6.get((byte) 's');
+	State<byte[]> s6 = s1.get((byte) 'i');
+	State<byte[]> s7 = s6.get((byte) 's');
 
-	State s8 = s2.get((byte) 'r');
-	State s9 = s8.get((byte) 's');
+	State<byte[]> s8 = s2.get((byte) 'r');
+	State<byte[]> s9 = s8.get((byte) 's');
 
 	assertEquals(s0, s1.getFail());
 	assertEquals(s0, s2.getFail());
@@ -99,9 +96,10 @@ public class TestAhoCorasick extends TestCase {
 
 
     public void testStartSearchWithSingleResult() {
+	AhoCorasick<byte[]> tree = new AhoCorasick<>();
 	tree.add("apple".getBytes(), "apple".getBytes());
 	tree.prepare();
-	SearchResult result = 
+	SearchResult<byte[]> result =
 	    tree.startSearch("washington cut the apple tree".getBytes());
 	assertEquals(1, result.getOutputs().size());
 	assertEquals("apple",
@@ -114,12 +112,13 @@ public class TestAhoCorasick extends TestCase {
 
 
     public void testStartSearchWithAdjacentResults() {
+	AhoCorasick<byte[]> tree = new AhoCorasick<>();
 	tree.add("john".getBytes(), "john".getBytes());
 	tree.add("jane".getBytes(), "jane".getBytes());
 	tree.prepare();
-	SearchResult firstResult = 
+	SearchResult<byte[]> firstResult =
 	    tree.startSearch("johnjane".getBytes());
-	SearchResult secondResult =
+	SearchResult<byte[]> secondResult =
 	    tree.continueSearch(firstResult);
 	assertEquals(null, tree.continueSearch(secondResult));
     }
@@ -127,35 +126,37 @@ public class TestAhoCorasick extends TestCase {
 
 
     public void testStartSearchOnEmpty() {
-	tree.add("cipher".getBytes(), new Integer(0));
-	tree.add("zip".getBytes(), new Integer(1));
-	tree.add("nought".getBytes(), new Integer(2));
+	AhoCorasick<Integer> tree = new AhoCorasick<>();
+	tree.add("cipher".getBytes(), 0);
+	tree.add("zip".getBytes(), 1);
+	tree.add("nought".getBytes(), 2);
 	tree.prepare();
-	SearchResult result = tree.startSearch("".getBytes());
+	SearchResult<Integer> result = tree.startSearch("".getBytes());
 	assertEquals(null, result);
     }
 
 
     public void testMultipleOutputs() {
+	AhoCorasick<String> tree = new AhoCorasick<>();
 	tree.add("x".getBytes(), "x");
 	tree.add("xx".getBytes(), "xx");
 	tree.add("xxx".getBytes(), "xxx");
 	tree.prepare();
 
-	SearchResult result = tree.startSearch("xxx".getBytes());
+	SearchResult<String> result = tree.startSearch("xxx".getBytes());
 	assertEquals(1, result.getLastIndex());
-	assertEquals(new HashSet(Arrays.asList(new String[] {"x"})),
+	assertEquals(new HashSet<>(singletonList("x")),
 		     result.getOutputs());
 
 	result = tree.continueSearch(result);
 	assertEquals(2, result.getLastIndex());
-	assertEquals(new HashSet(Arrays.asList(new String[] {"xx", "x"})),
+	assertEquals(new HashSet<>(Arrays.asList("xx", "x")),
 		     result.getOutputs());
 
 
 	result = tree.continueSearch(result);
 	assertEquals(3, result.getLastIndex());
-	assertEquals(new HashSet(Arrays.asList(new String[] {"xxx", "xx", "x"})),
+	assertEquals(new HashSet<>(Arrays.asList("xxx", "xx", "x")),
 		     result.getOutputs());
 
 	assertEquals(null, tree.continueSearch(result));
@@ -163,36 +164,37 @@ public class TestAhoCorasick extends TestCase {
 
 
     public void testIteratorInterface() {
+	AhoCorasick<String> tree = new AhoCorasick<>();
 	tree.add("moo".getBytes(), "moo");
 	tree.add("one".getBytes(), "one");
 	tree.add("on".getBytes(), "on");
 	tree.add("ne".getBytes(), "ne");
 	tree.prepare();
-	Iterator iter = tree.search("one moon ago".getBytes());
+	Iterator<SearchResult<String>> iter = tree.search("one moon ago".getBytes());
 
 	assertTrue(iter.hasNext());
-	SearchResult r = (SearchResult) iter.next();
-	assertEquals(new HashSet(Arrays.asList(new String[] {"on"})),
+	SearchResult<String> r = iter.next();
+	assertEquals(new HashSet<>(singletonList("on")),
 		     r.getOutputs());
 	assertEquals(2, r.getLastIndex());
 
 
 	assertTrue(iter.hasNext());
-	r = (SearchResult) iter.next();
-	assertEquals(new HashSet(Arrays.asList(new String[] {"one", "ne"})),
+	r = iter.next();
+	assertEquals(new HashSet<>(Arrays.asList("one", "ne")),
 		     r.getOutputs());
 	assertEquals(3, r.getLastIndex());
 
 
 	assertTrue(iter.hasNext());
-	r = (SearchResult) iter.next();
-	assertEquals(new HashSet(Arrays.asList(new String[] {"moo"})),
+	r = iter.next();
+	assertEquals(new HashSet<>(singletonList("moo")),
 		     r.getOutputs());
 	assertEquals(7, r.getLastIndex());
 	
 	assertTrue(iter.hasNext());
-	r = (SearchResult) iter.next();
-	assertEquals(new HashSet(Arrays.asList(new String[] {"on"})),
+	r = iter.next();
+	assertEquals(new HashSet<>(singletonList("on")),
 		     r.getOutputs());
 	assertEquals(8, r.getLastIndex());
 
@@ -207,7 +209,8 @@ public class TestAhoCorasick extends TestCase {
     }
 
 
-    public void largerTextExample() {
+    public void testLargerTextExample() {
+	AhoCorasick<String> tree = new AhoCorasick<>();
 	String text = "The ga3 mutant of Arabidopsis is a gibberellin-responsive dwarf. We present data showing that the ga3-1 mutant is deficient in ent-kaurene oxidase activity, the first cytochrome P450-mediated step in the gibberellin biosynthetic pathway. By using a combination of conventional map-based cloning and random sequencing we identified a putative cytochrome P450 gene mapping to the same location as GA3. Relative to the progenitor line, two ga3 mutant alleles contained single base changes generating in-frame stop codons in the predicted amino acid sequence of the P450. A genomic clone spanning the P450 locus complemented the ga3-2 mutant. The deduced GA3 protein defines an additional class of cytochrome P450 enzymes. The GA3 gene was expressed in all tissues examined, RNA abundance being highest in inflorescence tissue.";
 	String[] terms = {
 	    "microsome",
@@ -231,24 +234,22 @@ public class TestAhoCorasick extends TestCase {
 	}
 	tree.prepare();
 
-	Set termsThatHit = new HashSet();
-	for (Iterator iter = tree.search(text.getBytes()); iter.hasNext(); ) {
-	    SearchResult result = (SearchResult) iter.next();
+	Set<String> termsThatHit = new HashSet<>();
+	for (Iterator<SearchResult<String>> iter = tree.search(text.getBytes()); iter.hasNext(); ) {
+	    SearchResult<String> result = iter.next();
 	    termsThatHit.addAll(result.getOutputs());
 	}
 	assertEquals
-	    (new HashSet(Arrays.asList(new String[] {
-		"cytochrome",
-		"GA3",
-		"cytochrome P450",
-		"protein",
-		"RNA",
-		"gibberellin",
-		"Arabidopsis",
-		"ent-kaurene oxidase activity",
-		"inflorescence",
-		"tissue",
-		    })), termsThatHit);
+	    (new HashSet<>(Arrays.asList("cytochrome",
+				"GA3",
+				"cytochrome P450",
+				"protein",
+				"RNA",
+				"gibberellin",
+				"Arabidopsis",
+				"ent-kaurene oxidase activity",
+				"inflorescence",
+				"tissue")), termsThatHit);
 	
     }
 }

@@ -36,12 +36,12 @@ import java.util.Iterator;
 
    </ul>
  */
-public class AhoCorasick {
-    private State root;
+public class AhoCorasick<T> {
+    private State<T> root;
     private boolean prepared;
 
     public AhoCorasick() {
-	this.root = new State(0);
+	this.root = new State<T>(0);
 	this.prepared = false;
     }
 
@@ -52,11 +52,11 @@ public class AhoCorasick {
        the keyword is matched, output will be one of the yielded
        elements in SearchResults.getOutputs().
      */
-    public void add(byte[] keyword, Object output) {
+    public void add(byte[] keyword, T output) {
 	if (this.prepared)
 	    throw new IllegalStateException
 		("can't add keywords after prepare() is called");
-	State lastState = this.root.extendAll(keyword);
+	State<T> lastState = this.root.extendAll(keyword);
 	lastState.addOutput(output);
     }
 
@@ -77,8 +77,8 @@ public class AhoCorasick {
     /**
        Starts a new search, and returns an Iterator of SearchResults.
      */
-    public Iterator search(byte[] bytes) {
-	return new Searcher(this, this.startSearch(bytes));
+    public Iterator<SearchResult<T>> search(byte[] bytes) {
+	return new Searcher<T>(this, this.startSearch(bytes));
     }
 
 
@@ -93,7 +93,7 @@ public class AhoCorasick {
 	except for the root.
     */
     private void prepareFailTransitions() {
-	Queue q = new Queue();
+	Queue<T> q = new Queue<>();
 	for(int i = 0; i < 256; i++)
 	    if (this.root.get((byte) i) != null) {
 		this.root.get((byte) i).setFail(this.root);
@@ -101,12 +101,12 @@ public class AhoCorasick {
 	    }
 	this.prepareRoot();
 	while (! q.isEmpty()) {
-	    State state = q.pop();
+	    State<T> state = q.pop();
 	    byte[] keys = state.keys();
 	    for (int i = 0; i < keys.length; i++) {
-		State r = state;
+		State<T> r = state;
 		byte a = keys[i];
-		State s = r.get(a);
+		State<T> s = r.get(a);
 		q.add(s);
 		r = r.getFail();
 		while (r.get(a) == null)
@@ -133,7 +133,7 @@ public class AhoCorasick {
        Returns the root of the tree.  Package protected, since the
        user probably shouldn't touch this.
      */
-    State getRoot() {
+    State<T> getRoot() {
 	return this.root;
     }
 
@@ -142,12 +142,12 @@ public class AhoCorasick {
     /**
        Begins a new search using the raw interface.  Package protected.
      */
-    SearchResult startSearch(byte[] bytes) {
+    SearchResult<T> startSearch(byte[] bytes) {
 	if (! this.prepared)
 	    throw new IllegalStateException
 		("can't start search until prepare()");
 	return continueSearch
-	    (new SearchResult(this.root, bytes, 0));
+	    (new SearchResult<T>(this.root, bytes, 0));
     }
 
 
@@ -156,16 +156,16 @@ public class AhoCorasick {
        Continues the search, given the initial state described by the
        lastResult.  Package protected.
      */
-    SearchResult continueSearch(SearchResult lastResult) {
+    SearchResult<T> continueSearch(SearchResult<T> lastResult) {
 	byte[] bytes = lastResult.bytes;
-	State state = lastResult.lastMatchedState;
+	State<T> state = lastResult.lastMatchedState;
 	for (int i = lastResult.lastIndex; i < bytes.length; i++) {
 	    byte b = bytes[i];
 	    while (state.get(b) == null)
 		state = state.getFail();
 	    state = state.get(b);
 	    if (state.getOutputs().size() > 0)
-		return new SearchResult(state, bytes, i+1);
+		return new SearchResult<T>(state, bytes, i+1);
 	}
 	return null;
     }

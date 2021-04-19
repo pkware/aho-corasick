@@ -14,7 +14,7 @@ import java.io.BufferedReader;
 public class TimeTrial {
     static public void main(String[] args) throws IOException {
 	long startTime = System.currentTimeMillis();
-	AhoCorasick tree = new AhoCorasick();
+	AhoCorasick<Object> tree = new AhoCorasick<>();
 	BufferedReader reader = new BufferedReader
 	    (new InputStreamReader
 	     (new FileInputStream("/usr/share/dict/words")));

@@ -8,11 +8,11 @@ import java.util.NoSuchElementException;
    Iterator returns a list of Search matches.
  */
 
-class Searcher implements Iterator {
-    private SearchResult currentResult;
-    private AhoCorasick tree;
+class Searcher<T> implements Iterator<SearchResult<T>> {
+    private SearchResult<T> currentResult;
+    private AhoCorasick<T> tree;
 
-    Searcher(AhoCorasick tree, SearchResult result) {
+    Searcher(AhoCorasick<T> tree, SearchResult<T> result) {
 	this.tree = tree;
 	this.currentResult = result;
     }
@@ -23,10 +23,10 @@ class Searcher implements Iterator {
     }
 
 
-    public Object next() {
+    public SearchResult<T> next() {
 	if (!hasNext())
 	    throw new NoSuchElementException();
-	Object result = currentResult;
+	SearchResult<T> result = currentResult;
 	currentResult = tree.continueSearch(currentResult);
 	return result;
     }
