@@ -20,6 +20,11 @@ java {
   withSourcesJar()
 }
 
+tasks.withType<JavaCompile> {
+  options.release.set(8)
+  options.encoding = "UTF-8"
+}
+
 publishing {
   publications {
     register("java", MavenPublication::class.java) {
