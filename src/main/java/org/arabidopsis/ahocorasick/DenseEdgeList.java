@@ -6,7 +6,7 @@ package org.arabidopsis.ahocorasick;
    (just an array access), but expensive in terms of memory.
  */
 
-class DenseEdgeList implements EdgeList {    
+class DenseEdgeList<T> implements EdgeList<T> {
     private State[] array;
 
     public DenseEdgeList() {
@@ -19,9 +19,9 @@ class DenseEdgeList implements EdgeList {
     /**
        Helps in converting to dense representation.
      */
-    public static DenseEdgeList fromSparse(SparseEdgeList list) {
+    public static <T> DenseEdgeList<T> fromSparse(SparseEdgeList<T> list) {
 	byte[] keys = list.keys();
-	DenseEdgeList newInstance = new DenseEdgeList();
+	DenseEdgeList<T> newInstance = new DenseEdgeList<T>();
 	for (int i = 0; i < keys.length; i++) {
 	    newInstance.put(keys[i], list.get(keys[i]));
 	}
@@ -29,12 +29,12 @@ class DenseEdgeList implements EdgeList {
     }
 
 
-    public State get(byte b) {
+    public State<T> get(byte b) {
 	return this.array[(int) b & 0xFF];
     }
 
 
-    public void put(byte b, State s) {
+    public void put(byte b, State<T> s) {
 	this.array[(int) b & 0xFF] = s;
     }
 

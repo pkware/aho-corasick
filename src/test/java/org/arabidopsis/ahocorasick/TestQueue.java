@@ -4,12 +4,12 @@ import junit.framework.TestCase;
 
 public class TestQueue extends TestCase {
     public void testSimple() {
-	Queue q = new Queue();
-	State s1 = new State(0);
-	State s2 = new State(0);
-	State s3 = new State(0);
-	State s4 = new State(0);
-	State s5 = new State(0);
+	Queue<Object> q = new Queue<>();
+	State<Object> s1 = new State<>(0);
+	State<Object> s2 = new State<>(0);
+	State<Object> s3 = new State<>(0);
+	State<Object> s4 = new State<>(0);
+	State<Object> s5 = new State<>(0);
 	assertTrue(q.isEmpty());
 	q.add(s1);
 	assertFalse(q.isEmpty());

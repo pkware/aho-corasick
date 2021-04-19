@@ -10,12 +10,12 @@ import java.util.Set;
    <p>(Internally, it also holds enough state to continue a running
    search, though this is not exposed for public use.)</p>
  */
-public class SearchResult {
-    State lastMatchedState;
+public class SearchResult<T> {
+    State<T> lastMatchedState;
     byte[] bytes;
     int lastIndex;
 
-    SearchResult(State s, byte[] bs, int i) {
+    SearchResult(State<T> s, byte[] bs, int i) {
 	this.lastMatchedState = s;
 	this.bytes = bs;
 	this.lastIndex = i;
@@ -25,7 +25,7 @@ public class SearchResult {
     /**
        Returns a list of the outputs of this match.
      */
-    public Set getOutputs() {
+    public Set<T> getOutputs() {
 	return lastMatchedState.getOutputs();
     }
 

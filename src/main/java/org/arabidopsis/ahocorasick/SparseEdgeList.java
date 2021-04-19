@@ -6,16 +6,16 @@ package org.arabidopsis.ahocorasick;
  */
 
 
-class SparseEdgeList implements EdgeList {    
-    private Cons head;
+class SparseEdgeList<T> implements EdgeList<T> {
+    private Cons<T> head;
 
     public SparseEdgeList() {
 	head = null;
     }
 
 
-    public State get(byte b) {
-	Cons c = head;
+    public State<T> get(byte b) {
+	Cons<T> c = head;
 	while (c != null) {
 	    if (c.b == b)
 		return c.s;
@@ -24,14 +24,14 @@ class SparseEdgeList implements EdgeList {
 	return null;
     }
 
-    public void put(byte b, State s) {
-	this.head = new Cons(b, s, head);
+    public void put(byte b, State<T> s) {
+	this.head = new Cons<T>(b, s, head);
     }
 
 
     public byte[] keys() {
 	int length = 0;
-	Cons c = head;
+	Cons<T> c = head;
 	while (c != null) {
 	    length++;
 	    c = c.next;
@@ -48,12 +48,12 @@ class SparseEdgeList implements EdgeList {
     }
 
 
-    static private class Cons {
+    static private class Cons<T> {
 	byte b;
-	State s;
-	Cons next;
+	State<T> s;
+	Cons<T> next;
 
-	public Cons(byte b, State s, Cons next) {
+	public Cons(byte b, State<T> s, Cons<T> next) {
 	    this.b = b;
 	    this.s = s;
 	    this.next = next;
