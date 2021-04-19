@@ -34,9 +34,17 @@ publishing {
         name.set("Aho-Corasick")
         packaging = "jar"
         description.set("The Aho-Corasick string searching algorithm.")
+        url.set("https://github.com/pkware/aho-corasick")
         organization {
           name.set("PKWARE, Inc.")
           url.set("https://www.pkware.com")
+        }
+
+        developers {
+          developer {
+            id.set("all")
+            name.set("Aho-Corasick Contributors")
+          }
         }
 
         scm {
