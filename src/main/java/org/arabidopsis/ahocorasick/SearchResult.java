@@ -25,7 +25,7 @@ public class SearchResult {
     /**
        Returns a list of the outputs of this match.
      */
-    public Set getOutputs() {
+    public Set<String> getOutputs() {
 	return lastMatchedState.getOutputs();
     }
 
