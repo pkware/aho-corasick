@@ -23,18 +23,13 @@ jobs:
       - uses: burrunan/gradle-cache-action@cbdf4342ff988d143aa7a5aeceedffafb8c74bcf #v1.10
         name: Build with Gradle
         with:
-          arguments: build sign
+          arguments: build
           # Ignore warning about missing checksum validation thrown by the action since we are using the wrapper-validation-action to verify the checksum
           gradle-distribution-sha-256-sum-warning: false
-          properties: |
-            SONATYPE_NEXUS_USERNAME=${{ secrets.SONATYPE_NEXUS_USERNAME }}
-            SONATYPE_NEXUS_PASSWORD=${{ secrets.SONATYPE_NEXUS_PASSWORD }}
-            signingKey=${{ secrets.SIGNING_KEY }}
-            signingPassword=${{ secrets.SIGNING_KEY_PASSWORD }}
 
       - uses: burrunan/gradle-cache-action@cbdf4342ff988d143aa7a5aeceedffafb8c74bcf #v1.10
         name: Publish
-        if: ${{ github.ref == 'refs/heads/master' && github.repository == 'pkware/aho-corasick' }}
+#        if: ${{ github.ref == 'refs/heads/master' && github.repository == 'pkware/aho-corasick' }}
         with:
           arguments: publish
           # Ignore warning about missing checksum validation thrown by the action since we are using the wrapper-validation-action to verify the checksum
