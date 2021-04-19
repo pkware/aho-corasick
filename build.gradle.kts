@@ -72,6 +72,7 @@ signing {
     val signingKey: String? by project
     val signingPassword: String? by project
     println(signingKey?.substring(0, 3))
+    println("length: ${signingKey?.length}")
 //    println(signingPassword?.substring(0, 5))
     useInMemoryPgpKeys(signingKey, signingPassword)
   }

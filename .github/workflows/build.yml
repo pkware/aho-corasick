@@ -37,5 +37,5 @@ jobs:
           properties: |
             SONATYPE_NEXUS_USERNAME=${{ secrets.SONATYPE_NEXUS_USERNAME }}
             SONATYPE_NEXUS_PASSWORD=${{ secrets.SONATYPE_NEXUS_PASSWORD }}
-            signingKey=${{ secrets.SIGNING_KEY }}
+            signingKey="${{ secrets.SIGNING_KEY }}"
             signingPassword=${{ secrets.SIGNING_KEY_PASSWORD }}
