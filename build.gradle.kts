@@ -71,8 +71,8 @@ signing {
     println("isNull: ${findProperty("signingKey")==null}")
     val signingKey: String? by project
     val signingPassword: String? by project
-    println(signingKey?.substring(0, 380))
-    println(signingPassword?.substring(0, 5))
+    println(signingKey?.substring(0, 3))
+//    println(signingPassword?.substring(0, 5))
     useInMemoryPgpKeys(signingKey, signingPassword)
   }
 
